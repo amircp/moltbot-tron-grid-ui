@@ -48,7 +48,7 @@ Open `http://localhost:3100` in your browser.
 The server automatically reads:
 - **Agent name** from `IDENTITY.md` in the workspace
 - **User name** from `USER.md` in the workspace
-- **Auth token** from `~/.openclaw/openclaw.json`
+- **Auth token** auto-detected from `~/.openclaw/` or `~/.clawdbot/` (backward compatible)
 
 ## Architecture
 

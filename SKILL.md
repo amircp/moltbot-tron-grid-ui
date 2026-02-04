@@ -36,7 +36,7 @@ The server runs on `http://localhost:3100` by default.
 - **`server.js`** — Node.js bridge: connects to OpenClaw gateway (`ws://127.0.0.1:18789`) via JSON-RPC, serves the frontend, proxies chat messages via WebSocket
 - **`index.html`** — Self-contained frontend with CSS themes, streaming chat, audio beeps
 - Identity (agent name, user name) auto-reads from `IDENTITY.md` and `USER.md` in the workspace
-- Gateway auth token auto-reads from `~/.openclaw/openclaw.json`
+- Gateway auth token auto-reads from config (supports `~/.openclaw/` and `~/.clawdbot/` paths)
 
 ## Themes
 

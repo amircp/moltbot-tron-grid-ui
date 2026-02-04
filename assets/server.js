@@ -32,11 +32,24 @@ function parseNameFromMd(filePath, fallback) {
   return fallback;
 }
 
-// Try to find workspace from openclaw config or use default
+// Try to find workspace from config (supports both openclaw and legacy clawdbot paths)
+function findConfigPath() {
+  const home = require('os').homedir();
+  const candidates = [
+    path.join(home, '.openclaw', 'openclaw.json'),
+    path.join(home, '.openclaw', 'clawdbot.json'),
+    path.join(home, '.clawdbot', 'openclaw.json'),
+    path.join(home, '.clawdbot', 'clawdbot.json'),
+  ];
+  for (const p of candidates) {
+    if (fs.existsSync(p)) return p;
+  }
+  return candidates[0]; // fallback
+}
+
 function findWorkspace() {
   try {
-    const configPath = path.join(require('os').homedir(), '.openclaw', 'openclaw.json');
-    const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+    const config = JSON.parse(fs.readFileSync(findConfigPath(), 'utf-8'));
     return config?.agents?.defaults?.workspace || path.join(require('os').homedir(), 'clawd');
   } catch {
     return path.join(require('os').homedir(), 'clawd');
@@ -48,11 +61,10 @@ AGENT_NAME = parseNameFromMd(path.join(WORKSPACE, 'IDENTITY.md'), 'AGENT');
 USER_NAME = parseNameFromMd(path.join(WORKSPACE, 'USER.md'), 'USER');
 console.log(`[IDENTITY] Agent: ${AGENT_NAME} | User: ${USER_NAME}`);
 
-// Read gateway auth token from openclaw config
+// Read gateway auth token from config
 let GATEWAY_TOKEN = '';
 try {
-  const configPath = path.join(require('os').homedir(), '.openclaw', 'openclaw.json');
-  const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+  const config = JSON.parse(fs.readFileSync(findConfigPath(), 'utf-8'));
   GATEWAY_TOKEN = config?.gateway?.auth?.token || '';
   if (GATEWAY_TOKEN) console.log('[CONFIG] Gateway token loaded');
 } catch (e) {
