@@ -6,6 +6,8 @@ A TRON-inspired web chat interface for [OpenClaw](https://github.com/openclaw/op
 ![Dillinger Grid](https://img.shields.io/badge/theme-Dillinger_Grid-ff3a2f?style=flat-square)
 ![ENCOM Grid](https://img.shields.io/badge/theme-ENCOM_Grid-00ff88?style=flat-square)
 
+![TRON Grid UI - Dillinger Grid Theme](assets/screenshot.jpg)
+
 ## Features
 
 - **Real-time WebSocket bridge** to the OpenClaw gateway (JSON-RPC)
