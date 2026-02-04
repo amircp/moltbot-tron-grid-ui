@@ -1,6 +1,6 @@
 /**
  * TRON Interface Bridge Server
- * Bridges the frontend TRON UI to the Clawdbot gateway WebSocket API.
+ * Bridges the frontend TRON UI to the OpenClaw gateway WebSocket API.
  */
 
 const express = require('express');
@@ -32,10 +32,10 @@ function parseNameFromMd(filePath, fallback) {
   return fallback;
 }
 
-// Try to find workspace from clawdbot config or use default
+// Try to find workspace from openclaw config or use default
 function findWorkspace() {
   try {
-    const configPath = path.join(require('os').homedir(), '.clawdbot', 'clawdbot.json');
+    const configPath = path.join(require('os').homedir(), '.openclaw', 'openclaw.json');
     const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
     return config?.agents?.defaults?.workspace || path.join(require('os').homedir(), 'clawd');
   } catch {
@@ -48,10 +48,10 @@ AGENT_NAME = parseNameFromMd(path.join(WORKSPACE, 'IDENTITY.md'), 'AGENT');
 USER_NAME = parseNameFromMd(path.join(WORKSPACE, 'USER.md'), 'USER');
 console.log(`[IDENTITY] Agent: ${AGENT_NAME} | User: ${USER_NAME}`);
 
-// Read gateway auth token from clawdbot config
+// Read gateway auth token from openclaw config
 let GATEWAY_TOKEN = '';
 try {
-  const configPath = path.join(require('os').homedir(), '.clawdbot', 'clawdbot.json');
+  const configPath = path.join(require('os').homedir(), '.openclaw', 'openclaw.json');
   const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
   GATEWAY_TOKEN = config?.gateway?.auth?.token || '';
   if (GATEWAY_TOKEN) console.log('[CONFIG] Gateway token loaded');

@@ -1,6 +1,6 @@
 # TRON Grid UI
 
-A TRON-inspired web chat interface for [Clawdbot](https://github.com/clawdbot/clawdbot). Real-time communication with your AI agent through a cyberpunk terminal.
+A TRON-inspired web chat interface for [OpenClaw](https://github.com/openclaw/openclaw). Real-time communication with your AI agent through a cyberpunk terminal.
 
 ![Flynn Grid](https://img.shields.io/badge/theme-Flynn_Grid-00c8ff?style=flat-square)
 ![Dillinger Grid](https://img.shields.io/badge/theme-Dillinger_Grid-ff3a2f?style=flat-square)
@@ -8,7 +8,7 @@ A TRON-inspired web chat interface for [Clawdbot](https://github.com/clawdbot/cl
 
 ## Features
 
-- **Real-time WebSocket bridge** to the Clawdbot gateway (JSON-RPC)
+- **Real-time WebSocket bridge** to the OpenClaw gateway (JSON-RPC)
 - **Streaming responses** with live text rendering
 - **Three color themes** inspired by TRON: Ares (2025)
   - **Flynn Grid** — Classic cyan/blue
@@ -21,10 +21,10 @@ A TRON-inspired web chat interface for [Clawdbot](https://github.com/clawdbot/cl
 
 ## Installation
 
-### As a Clawdbot Skill
+### As a OpenClaw Skill
 
 ```bash
-clawdbot skill install tron-grid-ui.skill
+openclaw skill install tron-grid-ui.skill
 ```
 
 ### Manual
@@ -43,17 +43,17 @@ Open `http://localhost:3100` in your browser.
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `PORT` | `3100` | Server port |
-| `GATEWAY_URL` | `ws://127.0.0.1:18789` | Clawdbot gateway WebSocket URL |
+| `GATEWAY_URL` | `ws://127.0.0.1:18789` | OpenClaw gateway WebSocket URL |
 
 The server automatically reads:
 - **Agent name** from `IDENTITY.md` in the workspace
 - **User name** from `USER.md` in the workspace
-- **Auth token** from `~/.clawdbot/clawdbot.json`
+- **Auth token** from `~/.openclaw/openclaw.json`
 
 ## Architecture
 
 ```
-Browser ←→ WebSocket:3100 ←→ server.js ←→ WebSocket:18789 ←→ Clawdbot Gateway ←→ AI Agent
+Browser ←→ WebSocket:3100 ←→ server.js ←→ WebSocket:18789 ←→ OpenClaw Gateway ←→ AI Agent
 ```
 
 ## Files
@@ -62,7 +62,7 @@ Browser ←→ WebSocket:3100 ←→ server.js ←→ WebSocket:18789 ←→ Cla
 - `assets/server.js` — Node.js bridge server (Express + WebSocket)
 - `assets/package.json` — Dependencies (express, ws, uuid)
 - `scripts/setup.sh` — Automated setup script
-- `SKILL.md` — Clawdbot skill instructions
+- `SKILL.md` — OpenClaw skill instructions
 
 ## License
 

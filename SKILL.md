@@ -1,18 +1,18 @@
 ---
 name: tron-grid-ui
-description: TRON-themed web interface for Clawdbot. Provides a cyberpunk chat UI with real-time WebSocket bridge to the gateway. Features multiple color themes (Flynn/Dillinger/ENCOM grids), streaming responses, and auto-configured identity from workspace files. Use when user asks to set up, start, or manage the TRON interface, Grid UI, or cyberpunk chat frontend.
+description: TRON-themed web interface for OpenClaw. Provides a cyberpunk chat UI with real-time WebSocket bridge to the gateway. Features multiple color themes (Flynn/Dillinger/ENCOM grids), streaming responses, and auto-configured identity from workspace files. Use when user asks to set up, start, or manage the TRON interface, Grid UI, or cyberpunk chat frontend.
 ---
 
 # TRON Grid UI
 
-A TRON-inspired web chat interface that connects directly to the Clawdbot gateway via WebSocket JSON-RPC.
+A TRON-inspired web chat interface that connects directly to the OpenClaw gateway via WebSocket JSON-RPC.
 
 ## Setup
 
 Run the setup script to install dependencies:
 
 ```bash
-bash "$(clawdbot skill path tron-grid-ui)/scripts/setup.sh"
+bash "$(openclaw skill path tron-grid-ui)/scripts/setup.sh"
 ```
 
 This copies the assets to `~/clawd/tron-ui/` and runs `npm install`.
@@ -33,10 +33,10 @@ The server runs on `http://localhost:3100` by default.
 
 ## How It Works
 
-- **`server.js`** — Node.js bridge: connects to Clawdbot gateway (`ws://127.0.0.1:18789`) via JSON-RPC, serves the frontend, proxies chat messages via WebSocket
+- **`server.js`** — Node.js bridge: connects to OpenClaw gateway (`ws://127.0.0.1:18789`) via JSON-RPC, serves the frontend, proxies chat messages via WebSocket
 - **`index.html`** — Self-contained frontend with CSS themes, streaming chat, audio beeps
 - Identity (agent name, user name) auto-reads from `IDENTITY.md` and `USER.md` in the workspace
-- Gateway auth token auto-reads from `~/.clawdbot/clawdbot.json`
+- Gateway auth token auto-reads from `~/.openclaw/openclaw.json`
 
 ## Themes
 
