@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="flynn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRON GRID UI</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+
+  /* ─── Theme Variables ──────────────────────────────────────── */
+  [data-theme="flynn"] {
+    --primary: #6fecff;
+    --primary-r: 111; --primary-g: 236; --primary-b: 255;
+    --grid-r: 0; --grid-g: 200; --grid-b: 255;
+    --user: #ffa000;
+    --user-accent: #ff8800;
+    --user-r: 255; --user-g: 160; --user-b: 0;
+    --grid-label: "FLYNN GRID";
+  }
+
+  [data-theme="dillinger"] {
+    --primary: #ff3a2f;
+    --primary-r: 255; --primary-g: 58; --primary-b: 47;
+    --grid-r: 255; --grid-g: 40; --grid-b: 30;
+    --user: #ff9500;
+    --user-accent: #ffb340;
+    --user-r: 255; --user-g: 149; --user-b: 0;
+    --grid-label: "DILLINGER GRID";
+  }
+
+  [data-theme="encom"] {
+    --primary: #00ff88;
+    --primary-r: 0; --primary-g: 255; --primary-b: 136;
+    --grid-r: 0; --grid-g: 255; --grid-b: 120;
+    --user: #b0ff50;
+    --user-accent: #d4ff80;
+    --user-r: 176; --user-g: 255; --user-b: 80;
+    --grid-label: "ENCOM GRID";
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #000;
+    color: var(--primary);
+    font-family: 'Share Tech Mono', monospace;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+    transition: color 0.5s;
+  }
+
+  /* Grid background */
+  .grid-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background:
+      linear-gradient(rgba(var(--grid-r),var(--grid-g),var(--grid-b),0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(var(--grid-r),var(--grid-g),var(--grid-b),0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: gridMove 20s linear infinite;
+    z-index: 0;
+    transition: background 0.5s;
+  }
+
+  @keyframes gridMove {
+    0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+    100% { transform: perspective(500px) rotateX(60deg) translateY(40px); }
+  }
+
+  .scanlines {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 1px, transparent 1px, transparent 3px);
+    z-index: 100;
+    pointer-events: none;
+  }
+
+  .container {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 20px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    border-bottom: 1px solid rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.3);
+    margin-bottom: 10px;
+    transition: border-color 0.5s;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .header h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    color: var(--primary);
+    text-shadow: 0 0 20px rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.8),
+                 0 0 40px rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.4);
+    animation: glow 2s ease-in-out infinite alternate;
+    transition: color 0.5s, text-shadow 0.5s;
+  }
+
+  @keyframes glow {
+    from { text-shadow: 0 0 20px rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.8), 0 0 40px rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.4); }
+    to { text-shadow: 0 0 30px rgba(var(--primary-r),var(--primary-g),var(--primary-b),1), 0 0 60px rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.6), 0 0 80px rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.3); }
+  }
+
+  /* Theme Switcher */
+  .theme-switcher {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .theme-btn {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.2);
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+  }
+
+  .theme-btn:hover {
+    transform: scale(1.2);
+    border-color: rgba(255,255,255,0.6);
+  }
+
+  .theme-btn.active {
+    border-color: #fff;
+    box-shadow: 0 0 12px currentColor;
+  }
+
+  .theme-btn.flynn {
+    background: #6fecff;
+    color: #6fecff;
+  }
+
+  .theme-btn.dillinger {
+    background: #ff3a2f;
+    color: #ff3a2f;
+  }
+
+  .theme-btn.encom {
+    background: #00ff88;
+    color: #00ff88;
+  }
+
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.6);
+    transition: color 0.5s;
+  }
+
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    animation: pulse 1.5s ease-in-out infinite;
+    transition: all 0.3s;
+  }
+
+  .status-dot.online { background: #00ff88; box-shadow: 0 0 10px #00ff88; }
+  .status-dot.offline { background: #ff4444; box-shadow: 0 0 10px #ff4444; animation: pulse-warn 1s ease-in-out infinite; }
+
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  @keyframes pulse-warn { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+
+  /* Identity disc */
+  .disc-container {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.04;
+    z-index: 0;
+  }
+
+  .identity-disc {
+    width: 500px; height: 500px;
+    border: 2px solid var(--primary);
+    border-radius: 50%;
+    position: relative;
+    animation: discSpin 30s linear infinite;
+    transition: border-color 0.5s;
+  }
+
+  .identity-disc::before {
+    content: '';
+    position: absolute;
+    top: 20px; left: 20px; right: 20px; bottom: 20px;
+    border: 1px solid rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.5);
+    border-radius: 50%;
+  }
+
+  .identity-disc::after {
+    content: '';
+    position: absolute;
+    top: 50px; left: 50px; right: 50px; bottom: 50px;
+    border: 1px solid rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.3);
+    border-radius: 50%;
+  }
+
+  @keyframes discSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  /* Chat area */
+  .chat-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.3) transparent;
+  }
+
+  .chat-area::-webkit-scrollbar { width: 4px; }
+  .chat-area::-webkit-scrollbar-track { background: transparent; }
+  .chat-area::-webkit-scrollbar-thumb { background: rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.3); border-radius: 2px; }
+
+  .message {
+    max-width: 75%;
+    padding: 12px 18px;
+    border-radius: 2px;
+    position: relative;
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .message.user {
+    align-self: flex-end;
+    background: rgba(var(--user-r),var(--user-g),var(--user-b),0.1);
+    border: 1px solid rgba(var(--user-r),var(--user-g),var(--user-b),0.4);
+    color: var(--user);
+    transition: all 0.5s;
+  }
+
+  .message.user .sender {
+    color: var(--user-accent);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 9px;
+    letter-spacing: 3px;
+    margin-bottom: 6px;
+    transition: color 0.5s;
+  }
+
+  .message.jarvis {
+    align-self: flex-start;
+    background: rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.05);
+    border: 1px solid rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.3);
+    color: var(--primary);
+    transition: all 0.5s;
+  }
+
+  .message.jarvis .sender {
+    color: var(--primary);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 9px;
+    letter-spacing: 3px;
+    margin-bottom: 6px;
+    text-shadow: 0 0 10px rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.5);
+    transition: all 0.5s;
+  }
+
+  .message .text {
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  .message .timestamp {
+    font-size: 9px;
+    opacity: 0.4;
+    margin-top: 6px;
+    text-align: right;
+  }
+
+  .message.system {
+    align-self: center;
+    max-width: 90%;
+    background: none;
+    border: none;
+    color: rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.3);
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-align: center;
+    padding: 5px;
+    transition: color 0.5s;
+  }
+
+  .message.tool-indicator {
+    align-self: flex-start;
+    max-width: 60%;
+    background: rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.02);
+    border: 1px solid rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.15);
+    color: rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.4);
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 6px 12px;
+    transition: all 0.5s;
+  }
+
+  .tool-indicator .tool-icon {
+    display: inline-block;
+    animation: spin 1.5s linear infinite;
+    margin-right: 6px;
+  }
+
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  .typing {
+    display: none;
+    align-self: flex-start;
+    padding: 12px 18px;
+    color: rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.5);
+    font-size: 12px;
+    transition: color 0.5s;
+  }
+
+  .typing.active { display: flex; align-items: center; gap: 4px; }
+  .typing span { animation: blink 1s infinite; }
+  .typing span:nth-child(2) { animation-delay: 0.2s; }
+  .typing span:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes blink { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
+
+  /* Input area */
+  .input-area {
+    display: flex;
+    gap: 10px;
+    padding: 15px 20px;
+    border-top: 1px solid rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.2);
+    transition: border-color 0.5s;
+  }
+
+  .input-area input {
+    flex: 1;
+    background: rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.05);
+    border: 1px solid rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.3);
+    border-radius: 2px;
+    padding: 12px 18px;
+    color: var(--user);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s;
+  }
+
+  .input-area input:focus {
+    border-color: rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.6);
+    box-shadow: 0 0 15px rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.1);
+  }
+
+  .input-area input::placeholder {
+    color: rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.2);
+    letter-spacing: 2px;
+  }
+
+  .input-area input:disabled { opacity: 0.3; }
+
+  .input-area button {
+    background: rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.1);
+    border: 1px solid rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.4);
+    color: var(--primary);
+    padding: 12px 24px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
+  }
+
+  .input-area button:hover {
+    background: rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.2);
+    box-shadow: 0 0 20px rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.3);
+  }
+
+  .input-area button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .input-area button.abort {
+    background: rgba(255, 68, 68, 0.1);
+    border-color: rgba(255, 68, 68, 0.4);
+    color: #ff4444;
+  }
+
+  .input-area button.abort:hover {
+    background: rgba(255, 68, 68, 0.2);
+    box-shadow: 0 0 20px rgba(255, 68, 68, 0.3);
+  }
+
+  .footer-stats {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 20px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.25);
+    border-top: 1px solid rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.1);
+    transition: all 0.5s;
+  }
+
+  .side-line-left, .side-line-right {
+    position: fixed;
+    top: 0; width: 1px; height: 100%;
+    background: linear-gradient(to bottom, transparent, rgba(var(--primary-r),var(--primary-g),var(--primary-b),0.2), transparent);
+    z-index: 5;
+    transition: background 0.5s;
+  }
+  .side-line-left { left: 15px; }
+  .side-line-right { right: 15px; }
+
+  .cursor {
+    display: inline-block;
+    width: 8px; height: 14px;
+    background: var(--primary);
+    animation: cursor-blink 0.6s infinite;
+    vertical-align: text-bottom;
+    margin-left: 2px;
+    transition: background 0.5s;
+  }
+
+  @keyframes cursor-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<div class="side-line-left"></div>
+<div class="side-line-right"></div>
+
+<div class="disc-container">
+  <div class="identity-disc"></div>
+</div>
+
+<div class="container">
+  <div class="header">
+    <div class="header-left">
+      <h1>AGENT</h1>
+      <div class="theme-switcher">
+        <div class="theme-btn flynn active" onclick="setTheme('flynn')" title="Flynn Grid"></div>
+        <div class="theme-btn dillinger" onclick="setTheme('dillinger')" title="Dillinger Grid"></div>
+        <div class="theme-btn encom" onclick="setTheme('encom')" title="ENCOM Grid"></div>
+      </div>
+    </div>
+    <div class="status">
+      <div class="status-dot offline" id="statusDot"></div>
+      <span id="statusText">CONNECTING</span>
+      <span>|</span>
+      <span id="clock">00:00:00</span>
+    </div>
+  </div>
+
+  <div class="chat-area" id="chat">
+    <div class="message system">— SECURE CHANNEL ESTABLISHED —</div>
+    <div class="message system">— ENCRYPTION: AES-256 // PROTOCOL: TRON-7 —</div>
+
+  </div>
+
+  <div class="typing" id="typing">
+    <span>▊</span><span>▊</span><span>▊</span>&nbsp;PROCESSING
+  </div>
+
+  <div class="input-area">
+    <input type="text" id="input" placeholder="ENTER COMMAND..." autocomplete="off" disabled />
+    <button id="sendBtn" onclick="sendMessage()" disabled>SEND</button>
+    <button id="abortBtn" class="abort" onclick="abortMessage()" style="display:none">ABORT</button>
+  </div>
+
+  <div class="footer-stats">
+    <span id="nodeLabel">NODE: LOCAL</span>
+    <span id="gridLabel">FLYNN GRID</span>
+    <span>TRON INTERFACE v3.0</span>
+  </div>
+</div>
+
+<script>
+  // ─── Theme ────────────────────────────────────────────────────
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('.theme-btn.' + theme).classList.add('active');
+    const labels = { flynn: 'FLYNN GRID', dillinger: 'DILLINGER GRID', encom: 'ENCOM GRID' };
+    document.getElementById('gridLabel').textContent = labels[theme] || theme.toUpperCase();
+    localStorage.setItem('tron-theme', theme);
+    addSystemMessage('GRID CHANGED: ' + (labels[theme] || theme.toUpperCase()));
+    document.title = agentName.toUpperCase() + ' // TRON INTERFACE';
+  }
+
+  // Load saved theme
+  (function() {
+    const saved = localStorage.getItem('tron-theme');
+    if (saved && ['flynn','dillinger','encom'].includes(saved)) {
+      document.documentElement.setAttribute('data-theme', saved);
+      document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+      const btn = document.querySelector('.theme-btn.' + saved);
+      if (btn) btn.classList.add('active');
+      const labels = { flynn: 'FLYNN GRID', dillinger: 'DILLINGER GRID', encom: 'ENCOM GRID' };
+      document.getElementById('gridLabel').textContent = labels[saved] || saved.toUpperCase();
+    }
+  })();
+
+  // ─── Audio ────────────────────────────────────────────────────
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  let audioCtx = null;
+
+  function playBeep(freq = 880, duration = 0.08, volume = 0.06) {
+    try {
+      if (!audioCtx) audioCtx = new AudioCtx();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.value = volume;
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    } catch(e) {}
+  }
+
+  // ─── Clock ────────────────────────────────────────────────────
+  function updateClock() {
+    document.getElementById('clock').textContent =
+      new Date().toLocaleTimeString('en-US', { hour12: false, timeZone: 'America/Merida' });
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // ─── State ────────────────────────────────────────────────────
+  let ws = null;
+  let connected = false;
+  let streaming = false;
+  let streamText = '';
+  let streamMsgEl = null;
+  let reconnectTimer = null;
+  let agentName = 'AGENT';
+  let userName = 'USER';
+  let typingEl = document.getElementById('typing');
+  let chatEl = document.getElementById('chat');
+  let inputEl = document.getElementById('input');
+  let sendBtn = document.getElementById('sendBtn');
+  let abortBtn = document.getElementById('abortBtn');
+  let statusDot = document.getElementById('statusDot');
+  let statusText = document.getElementById('statusText');
+
+  // ─── WebSocket ────────────────────────────────────────────────
+  function connectWS() {
+    if (ws) { try { ws.close(); } catch {} ws = null; }
+    const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+    ws = new WebSocket(`${protocol}://${location.host}`);
+
+    ws.onopen = () => {
+      console.log('[WS] Connected');
+      ws.send(JSON.stringify({ type: 'history' }));
+    };
+    ws.onmessage = (e) => {
+      try { handleMessage(JSON.parse(e.data)); } catch {}
+    };
+    ws.onclose = () => { setConnected(false); scheduleReconnect(); };
+    ws.onerror = () => {};
+  }
+
+  function scheduleReconnect() {
+    if (reconnectTimer) return;
+    reconnectTimer = setTimeout(() => { reconnectTimer = null; connectWS(); }, 2000);
+  }
+
+  function setConnected(state) {
+    connected = state;
+    statusDot.className = 'status-dot ' + (state ? 'online' : 'offline');
+    statusText.textContent = state ? 'GRID ONLINE' : 'OFFLINE';
+    inputEl.disabled = !state;
+    sendBtn.disabled = !state;
+    inputEl.placeholder = state ? 'ENTER COMMAND...' : 'RECONNECTING...';
+  }
+
+  // ─── Message Handling ─────────────────────────────────────────
+  function handleMessage(msg) {
+    switch (msg.type) {
+      case 'status':
+        setConnected(msg.connected);
+        if (msg.agentName) { agentName = msg.agentName; document.querySelector('h1').textContent = agentName; }
+        if (msg.userName) { userName = msg.userName; }
+        break;
+      case 'hello':
+        if (msg.agentName) { agentName = msg.agentName; document.querySelector('h1').textContent = agentName; }
+        if (msg.userName) { userName = msg.userName; }
+        addSystemMessage(agentName.toUpperCase() + ' ONLINE // SESSION: ' + (msg.sessionKey || 'main').toUpperCase());
+        break;
+      case 'history': loadHistory(msg.messages || []); break;
+      case 'stream': handleStream(msg); break;
+      case 'tool': handleTool(msg); break;
+      case 'error': addJarvisMessage('Error: ' + (msg.error || 'Unknown')); finishStream(); break;
+    }
+  }
+
+  function handleStream(msg) {
+    switch (msg.state) {
+      case 'start':
+        streaming = true;
+        streamText = '';
+        typingEl.classList.add('active');
+        abortBtn.style.display = '';
+        sendBtn.style.display = 'none';
+        break;
+
+      case 'delta':
+        typingEl.classList.remove('active');
+        if (!streamMsgEl) { streamMsgEl = createStreamMessage(); playBeep(660, 0.06, 0.04); }
+        if (msg.text) { streamText = msg.text; }
+        updateStreamMessage(streamText);
+        scrollToBottom();
+        break;
+
+      case 'final':
+        if (msg.text) { streamText = msg.text; }
+        if (streamMsgEl) { finalizeStreamMessage(); playBeep(880, 0.1, 0.05); }
+        finishStream();
+        break;
+
+      case 'aborted':
+        if (streamMsgEl) { streamText += '\n[ABORTED]'; finalizeStreamMessage(); }
+        finishStream();
+        break;
+
+      case 'error':
+        if (streamMsgEl) { streamText += '\n[ERROR: ' + (msg.error || 'Unknown') + ']'; finalizeStreamMessage(); }
+        else { addJarvisMessage('Error: ' + (msg.error || 'Unknown')); }
+        finishStream();
+        break;
+    }
+  }
+
+  function handleTool(msg) {
+    if (msg.phase === 'start') {
+      const el = document.createElement('div');
+      el.className = 'message tool-indicator';
+      el.id = 'tool-' + (msg.toolCallId || '');
+      el.innerHTML = `<span class="tool-icon">⚙</span> ${escapeHtml(msg.name || 'tool')}`;
+      chatEl.appendChild(el);
+      scrollToBottom();
+    } else if (msg.phase === 'result') {
+      const el = document.getElementById('tool-' + (msg.toolCallId || ''));
+      if (el) el.remove();
+    }
+  }
+
+  function finishStream() {
+    streaming = false; streamText = ''; streamMsgEl = null;
+    typingEl.classList.remove('active');
+    abortBtn.style.display = 'none';
+    sendBtn.style.display = '';
+    inputEl.focus();
+  }
+
+  // ─── Message Elements ─────────────────────────────────────────
+  function createStreamMessage() {
+    const now = new Date().toLocaleTimeString('en-US', { hour12: false });
+    const el = document.createElement('div');
+    el.className = 'message jarvis';
+    el.innerHTML = `<div class="sender">${escapeHtml(agentName.toUpperCase())}</div><div class="text"></div><div class="timestamp">GRID-TIME ${now}</div>`;
+    chatEl.appendChild(el);
+    return el;
+  }
+
+  function updateStreamMessage(text) {
+    if (!streamMsgEl) return;
+    streamMsgEl.querySelector('.text').innerHTML = escapeHtml(text) + '<span class="cursor"></span>';
+  }
+
+  function finalizeStreamMessage() {
+    if (!streamMsgEl) return;
+    const now = new Date().toLocaleTimeString('en-US', { hour12: false });
+    streamMsgEl.querySelector('.text').innerHTML = escapeHtml(streamText);
+    streamMsgEl.querySelector('.timestamp').textContent = 'GRID-TIME ' + now;
+  }
+
+  function sendMessage() {
+    const text = inputEl.value.trim();
+    if (!text || !connected) return;
+    addUserMessage(text);
+    inputEl.value = '';
+    ws.send(JSON.stringify({ type: 'chat', message: text }));
+    scrollToBottom();
+  }
+
+  function abortMessage() {
+    if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ type: 'abort' }));
+  }
+
+  function addUserMessage(text) {
+    const now = new Date().toLocaleTimeString('en-US', { hour12: false });
+    const el = document.createElement('div');
+    el.className = 'message user';
+    el.innerHTML = `<div class="sender">${escapeHtml(userName.toUpperCase())}</div><div class="text">${escapeHtml(text)}</div><div class="timestamp">GRID-TIME ${now}</div>`;
+    chatEl.appendChild(el);
+  }
+
+  function addJarvisMessage(text) {
+    const now = new Date().toLocaleTimeString('en-US', { hour12: false });
+    const el = document.createElement('div');
+    el.className = 'message jarvis';
+    el.innerHTML = `<div class="sender">${escapeHtml(agentName.toUpperCase())}</div><div class="text">${escapeHtml(text)}</div><div class="timestamp">GRID-TIME ${now}</div>`;
+    chatEl.appendChild(el);
+    playBeep(880, 0.1, 0.05);
+    scrollToBottom();
+  }
+
+  function addSystemMessage(text) {
+    const el = document.createElement('div');
+    el.className = 'message system';
+    el.textContent = '— ' + text + ' —';
+    chatEl.appendChild(el);
+    scrollToBottom();
+  }
+
+  function loadHistory(messages) {
+    for (const msg of messages) {
+      if (msg.role === 'user') addHistoryMessage('user', msg.text, msg.timestamp);
+      else if (msg.role === 'assistant') addHistoryMessage('assistant', msg.text, msg.timestamp);
+    }
+    scrollToBottom();
+  }
+
+  function addHistoryMessage(role, text, timestamp) {
+    if (!text) return;
+    const time = timestamp ? new Date(timestamp).toLocaleTimeString('en-US', { hour12: false }) : '??:??:??';
+    const el = document.createElement('div');
+    const isUser = role === 'user';
+    el.className = 'message ' + (isUser ? 'user' : 'jarvis');
+    el.innerHTML = `<div class="sender">${isUser ? escapeHtml(userName.toUpperCase()) : escapeHtml(agentName.toUpperCase())}</div><div class="text">${escapeHtml(text)}</div><div class="timestamp">GRID-TIME ${time}</div>`;
+    chatEl.appendChild(el);
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  function scrollToBottom() {
+    requestAnimationFrame(() => { chatEl.scrollTop = chatEl.scrollHeight; });
+  }
+
+  // ─── Keyboard ─────────────────────────────────────────────────
+  inputEl.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !streaming) sendMessage(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && streaming) abortMessage(); });
+
+  // ─── Init ─────────────────────────────────────────────────────
+  connectWS();
+</script>
+
+</body>
+</html>
